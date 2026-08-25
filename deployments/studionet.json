@@ -1,0 +1,32 @@
+{
+  "network": "studionet",
+  "chain_id": 61999,
+  "rpc": "https://studio.genlayer.com/api",
+  "owner_wallet_address": "0x02b49c0B84410c19910DEdC43C9bAB526644F897",
+  "contract_address": "0x936D5aA5570bFE30AfBF5334144d2368A6aE31b5",
+  "deployment_transaction_hash": "0x6111c206b69b1b49f201c9914b60c3a464986bab040ed4749bd27675d4cae0cd",
+  "intelligent_transaction_hash": "0x6ca322f6975435a7b9c78b2482e0476783ddead0bfc3ff32cbe322097d1c23f6",
+  "verified_on": "2026-08-25",
+  "verification": {
+    "transaction_execution_succeeded": true,
+    "status_name": "FINALIZED",
+    "consensus_guard": "result_name absent or AGREE/MAJORITY_AGREE",
+    "execution_guard": "tx_execution_result_name absent or FINISHED_WITH_RETURN",
+    "state_read": "LATEST_FINAL",
+    "observed": {
+      "theme": "ACCESS"
+    }
+  },
+  "source": {
+    "path": "contracts/feedback_theme_board.py",
+    "sha256": "274e48028f03b0ddeab7782f68acfccd706129438cf11a1ddc9081e9e994bf99",
+    "genvm_runner": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6"
+  },
+  "wallet_policy": "owner-specific encrypted keystore outside the workspace; no secret committed",
+  "tooling": {
+    "genvm_linter": "0.11.0",
+    "genlayer_test": "0.29.2",
+    "pyright": "1.1.411",
+    "pytest": "9.1.1"
+  }
+}
