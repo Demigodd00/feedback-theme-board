@@ -147,17 +147,38 @@ class FeedbackThemeBoard(gl.Contract):
 {packet}
 FEEDBACK_PACKET_END"""
 
+        def normalize_theme_scores(value: Any) -> str:
+            scores = ""
+            if isinstance(value, str):
+                scores = value.strip()
+            elif isinstance(value, int) and not isinstance(value, bool):
+                scores = str(value).zfill(theme_count)
+            elif isinstance(value, list):
+                if len(value) != theme_count:
+                    raise gl.vm.UserError(f"{THEME_ERROR} invalid_theme_scores")
+                digits: list[str] = []
+                for score_value in value:
+                    if isinstance(score_value, int) and not isinstance(score_value, bool):
+                        digit = str(score_value)
+                    elif isinstance(score_value, str):
+                        digit = score_value.strip()
+                    else:
+                        raise gl.vm.UserError(f"{THEME_ERROR} invalid_theme_scores")
+                    if len(digit) != 1 or digit not in THEME_SCORE_LEVELS:
+                        raise gl.vm.UserError(f"{THEME_ERROR} invalid_theme_scores")
+                    digits.append(digit)
+                scores = "".join(digits)
+            else:
+                raise gl.vm.UserError(f"{THEME_ERROR} invalid_response_fields")
+            if len(scores) != theme_count or any(score not in THEME_SCORE_LEVELS for score in scores):
+                raise gl.vm.UserError(f"{THEME_ERROR} invalid_theme_scores")
+            return scores
+
         def categorize() -> dict[str, str]:
             raw = gl.nondet.exec_prompt(prompt, response_format="json")
             if not isinstance(raw, dict) or len(raw) != 1:
                 raise gl.vm.UserError(f"{THEME_ERROR} invalid_response_shape")
-            scores_value = raw.get("theme_scores")
-            if not isinstance(scores_value, str):
-                raise gl.vm.UserError(f"{THEME_ERROR} invalid_response_fields")
-            scores = scores_value.strip()
-            if len(scores) != theme_count or any(score not in THEME_SCORE_LEVELS for score in scores):
-                raise gl.vm.UserError(f"{THEME_ERROR} invalid_theme_scores")
-            return {"theme_scores": scores}
+            return {"theme_scores": normalize_theme_scores(raw.get("theme_scores"))}
 
         def independent_category(leader: gl.vm.Result[dict[str, Any]]) -> bool:
             if not isinstance(leader, gl.vm.Return):
@@ -248,3 +269,4 @@ FEEDBACK_PACKET_END"""
     @gl.public.view
     def get_policy(self) -> dict[str, Any]:
         return {"schema": "feedback-theme-board/policy/v2", "workflow": "themes_feedback_per_theme_scores_deterministic_assignment_participant_vote", "theme_score_levels": "0=none,1=partial,2=strong", "theme_assignment_is_deterministically_derived": True, "tie_or_zero_fallback": "OTHER", "maximum_themes": MAX_THEMES, "maximum_feedback_entries": MAX_FEEDBACK, "participant_priority_vote": True, "private_or_medical_inference": False, "deterministic_priority_count": True, "stored_feedback_only": True, "custodies_funds": False}
+
