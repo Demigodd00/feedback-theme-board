@@ -26,18 +26,18 @@ Before consensus, the contract normalizes bounded text, reads all required stora
 
 ## Consensus boundary
 
-Return only the closest supplied theme ID or OTHER. The AI does not assign urgency or decide the priority.
+Validators independently return one `0/1/2` relevance score for every frozen theme in its stored order. Consensus binds the complete vector, not a preselected theme ID, and does not assess urgency.
 
-The leader callback validates JSON shape, field types, closed categories, masks, and length bounds. A validator reruns the same semantic operation and rejects disagreement. Where an explanatory label can vary harmlessly, consensus binds the stable decision field while still checking that the leader's advisory text is well formed.
+The leader callback validates exact vector length and the closed score alphabet. A validator reruns the same per-theme analysis and rejects disagreement in any score. The contract deterministically selects a unique positive maximum and falls back to OTHER for ties or all-zero vectors.
 
 ## Deterministic boundary
 
-One submission/vote per address, theme counts, all-entry classification, vote tallying, and NO_PRIORITY tie handling are deterministic.
+Theme selection, one submission/vote per address, theme counts, all-entry completion, vote tallying, and NO_PRIORITY tie handling are deterministic.
 
 Important invariants:
 
 - The theme taxonomy freezes before feedback collection.
-- Consensus is limited to one stable theme field; subjective urgency was deliberately removed.
+- Consensus binds every stored per-theme score; subjective urgency was deliberately removed.
 - The final priority comes from authenticated participant votes, with ties recorded as NO_PRIORITY.
 
 No method sends value, pays rewards, escrows assets, deletes external data, or calls another contract.
