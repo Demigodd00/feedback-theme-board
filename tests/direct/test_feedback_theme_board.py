@@ -3,7 +3,7 @@ import json
 
 CONTRACT = Path(__file__).resolve().parents[2] / "contracts" / "feedback_theme_board.py"
 SDK = "v0.2.16"
-PROMPT = "Classify one feedback entry"
+PROMPT = "Score one feedback entry"
 STANDARD = "Assign the closest explicit theme using only the submitted feedback and frozen theme descriptions. Do not infer identity, emotion, urgency, or medical risk."
 
 
@@ -28,18 +28,20 @@ def prepare(contract, vm, owner, second, third):
 def test_classification_vote_and_priority(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie):
     contract = deploy(direct_vm, direct_deploy, direct_alice)
     prepare(contract, direct_vm, direct_alice, direct_bob, direct_charlie)
-    direct_vm.mock_llm(PROMPT, json.dumps({"theme_id": "ACCESS"}))
+    direct_vm.mock_llm(PROMPT, json.dumps({"theme_scores": "20"}))
     contract.classify_feedback("f1")
+    assert contract.get_feedback("f1")["theme_scores"] == "20"
+    assert contract.get_feedback("f1")["assigned_theme"] == "ACCESS"
     leader = direct_vm._captured_validators[-1][0]
     assert direct_vm.run_validator(leader_result=leader) is True
     direct_vm.clear_mocks()
-    direct_vm.mock_llm(PROMPT, json.dumps({"theme_id": "MATERIALS"}))
+    direct_vm.mock_llm(PROMPT, json.dumps({"theme_scores": "02"}))
     assert direct_vm.run_validator(leader_result=leader) is False
     direct_vm.clear_mocks()
-    direct_vm.mock_llm(PROMPT, json.dumps({"theme_id": "MATERIALS"}))
+    direct_vm.mock_llm(PROMPT, json.dumps({"theme_scores": "02"}))
     contract.classify_feedback("f2")
     direct_vm.clear_mocks()
-    direct_vm.mock_llm(PROMPT, json.dumps({"theme_id": "ACCESS"}))
+    direct_vm.mock_llm(PROMPT, json.dumps({"theme_scores": "20"}))
     contract.classify_feedback("f3")
     contract.vote_priority("ACCESS")
     direct_vm.sender = direct_bob
@@ -65,11 +67,11 @@ def test_one_feedback_per_address_and_facilitator_controls_lock(direct_vm, direc
         contract.lock_feedback()
 
 
-def test_invalid_theme_from_model_preserves_submission(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie):
+def test_invalid_theme_scores_from_model_preserve_submission(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie):
     contract = deploy(direct_vm, direct_deploy, direct_alice)
     prepare(contract, direct_vm, direct_alice, direct_bob, direct_charlie)
-    direct_vm.mock_llm(PROMPT, json.dumps({"theme_id": "SECRET"}))
-    with direct_vm.expect_revert("invalid_theme"):
+    direct_vm.mock_llm(PROMPT, json.dumps({"theme_scores": "2X"}))
+    with direct_vm.expect_revert("invalid_theme_scores"):
         contract.classify_feedback("f1")
     assert contract.get_feedback("f1")["state"] == "SUBMITTED"
     assert contract.get_state()["classified_count"] == 0

@@ -4,7 +4,7 @@ Classifies participant feedback into a facilitator-defined frozen theme set, the
 
 ## Why it is an Intelligent Contract
 
-Return only the closest supplied theme ID or OTHER. The AI does not assign urgency or decide the priority. GenLayer's validator consensus turns that semantic judgment into shared contract state. One submission/vote per address, theme counts, all-entry classification, vote tallying, and NO_PRIORITY tie handling are deterministic.
+Validators independently score every frozen theme `0`, `1`, or `2` for each feedback entry. The contract stores the complete ordered score vector and deterministically selects the unique highest positive theme; ties and all-zero vectors become OTHER. Participants—not the model—then vote on priority through the board lifecycle.
 
 ## Reusable deployment model
 
@@ -27,7 +27,7 @@ The contract uses only the stored question, standard, frozen theme descriptions,
 ## Core invariants
 
 - The theme taxonomy freezes before feedback collection.
-- Consensus is limited to one stable theme field; subjective urgency was deliberately removed.
+- Consensus binds the complete per-theme score vector; the model never supplies the selected theme ID.
 - The final priority comes from authenticated participant votes, with ties recorded as NO_PRIORITY.
 
 ## Public interface
@@ -53,13 +53,15 @@ gltest tests/integration/test_glsim_consensus.py --network localnet -q
 
 The StudioNet smoke test is opt-in and requires three disposable owner-specific test accounts. It reads state using `LATEST_FINAL` and asserts successful finalized execution.
 
-## Final StudioNet proof
+## Previous StudioNet deployment (superseded)
+
+These links and the recorded source hash refer to the earlier single-theme implementation. Redeploy the score-vector version and replace this section before submission.
 
 - Contract: https://explorer-studio.genlayer.com/address/0x936D5aA5570bFE30AfBF5334144d2368A6aE31b5
 - Studio import: https://studio.genlayer.com/?import-contract=0x936D5aA5570bFE30AfBF5334144d2368A6aE31b5
 - Deployment transaction: https://explorer-studio.genlayer.com/tx/0x6111c206b69b1b49f201c9914b60c3a464986bab040ed4749bd27675d4cae0cd
 - Intelligent transaction: https://explorer-studio.genlayer.com/tx/0x6ca322f6975435a7b9c78b2482e0476783ddead0bfc3ff32cbe322097d1c23f6
-- Observed final-state sample: `{"theme": "ACCESS"}`
+- Observed legacy final-state sample: `{"theme": "ACCESS"}`
 - Audited source SHA-256: `274e48028f03b0ddeab7782f68acfccd706129438cf11a1ddc9081e9e994bf99`
 
 ## Limitations

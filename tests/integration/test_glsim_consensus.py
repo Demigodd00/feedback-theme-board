@@ -7,11 +7,11 @@ from gltest.assertions import tx_execution_succeeded
 from gltest.types import TransactionStatus
 from gltest.utils import extract_contract_address
 
-PROMPT = "Classify one feedback entry"
+PROMPT = "Score one feedback entry"
 
 
-def context(theme):
-    validators = get_validator_factory().batch_create_mock_validators(5, mock_llm_response={"nondet_exec_prompt": {PROMPT: json.dumps({"theme_id": theme})}})
+def context(theme_scores):
+    validators = get_validator_factory().batch_create_mock_validators(5, mock_llm_response={"nondet_exec_prompt": {PROMPT: json.dumps({"theme_scores": theme_scores})}})
     return {"validators": [validator.to_dict() for validator in validators]}
 
 
@@ -35,9 +35,9 @@ def test_five_validator_feedback_priority_board():
     ok(second.submit_feedback(args=["f2", "The exercise sheet should include one complete worked example before the next session."]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
     ok(third.submit_feedback(args=["f3", "A larger sign near the side entrance would make the regular arrival route easier to spot."]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
     ok(facilitator.lock_feedback(args=[]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
-    ok(facilitator.classify_feedback(args=["f1"]).transact(transaction_context=context("ACCESS"), wait_transaction_status=TransactionStatus.FINALIZED))
-    ok(facilitator.classify_feedback(args=["f2"]).transact(transaction_context=context("MATERIALS"), wait_transaction_status=TransactionStatus.FINALIZED))
-    ok(facilitator.classify_feedback(args=["f3"]).transact(transaction_context=context("ACCESS"), wait_transaction_status=TransactionStatus.FINALIZED))
+    ok(facilitator.classify_feedback(args=["f1"]).transact(transaction_context=context("20"), wait_transaction_status=TransactionStatus.FINALIZED))
+    ok(facilitator.classify_feedback(args=["f2"]).transact(transaction_context=context("02"), wait_transaction_status=TransactionStatus.FINALIZED))
+    ok(facilitator.classify_feedback(args=["f3"]).transact(transaction_context=context("20"), wait_transaction_status=TransactionStatus.FINALIZED))
     ok(facilitator.vote_priority(args=["ACCESS"]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
     ok(second.vote_priority(args=["MATERIALS"]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
     ok(third.vote_priority(args=["ACCESS"]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
