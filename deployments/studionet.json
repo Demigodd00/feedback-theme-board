@@ -25,6 +25,11 @@
       "theme_scores": "20",
       "assigned_theme": "ACCESS",
       "state": "CLASSIFIED"
+    },
+    "source_and_tests_ci": {
+      "status": "success",
+      "workflow_run": "https://github.com/Demigodd00/feedback-theme-board/actions/runs/33385160876",
+      "note": "Current normalized-score source and direct-test commit passed contract-ci."
     }
   },
   "source": {
