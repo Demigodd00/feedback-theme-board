@@ -75,3 +75,18 @@ def test_invalid_theme_scores_from_model_preserve_submission(direct_vm, direct_d
         contract.classify_feedback("f1")
     assert contract.get_feedback("f1")["state"] == "SUBMITTED"
     assert contract.get_state()["classified_count"] == 0
+
+
+def test_equivalent_score_encodings_are_normalized(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie):
+    contract = deploy(direct_vm, direct_deploy, direct_alice)
+    prepare(contract, direct_vm, direct_alice, direct_bob, direct_charlie)
+    direct_vm.mock_llm(PROMPT, json.dumps({"theme_scores": [2, 0]}))
+    contract.classify_feedback("f1")
+    assert contract.get_feedback("f1")["theme_scores"] == "20"
+    assert contract.get_feedback("f1")["assigned_theme"] == "ACCESS"
+    direct_vm.clear_mocks()
+    direct_vm.mock_llm(PROMPT, json.dumps({"theme_scores": 2}))
+    contract.classify_feedback("f2")
+    assert contract.get_feedback("f2")["theme_scores"] == "02"
+    assert contract.get_feedback("f2")["assigned_theme"] == "MATERIALS"
+
