@@ -4,13 +4,13 @@ Audit date: 2026-08-31
 
 Audited source: `contracts/feedback_theme_board.py`
 
-Source SHA-256: `2f0de13f5163f437e83afa6b9b7bf033add7def405ebac602cf339b81cbd8151`
+Source SHA-256: `5e8e16d8087dd7677be932078495a5d1dd6d3b125cd50e1adbe62f73dca21c77`
 
 ## Outcome
 
-The category-only judgment identified in the prior review has been removed. Validators bind a complete ordered 0/1/2 relevance-score vector across every frozen theme. The contract stores that vector and deterministically selects a unique positive maximum, with ties and all-zero vectors mapped to OTHER before participant priority voting.
+The prior category-only judgment has been removed. Validators independently replay and bind a complete ordered 0/1/2 relevance vector across the frozen taxonomy. The contract selects the unique positive maximum, maps ties or all-zero vectors to OTHER, and then opens a separate participant-priority vote.
 
-The current source passed local and GitHub verification. It is not ready to submit with the previous StudioNet links: that deployment is bound to the superseded source and must be replaced by a deployment of the current hash.
+The current source passed GenVM lint and hardened direct tests and is deployed on StudioNet with a finalized representative intelligent write.
 
 ## Verification matrix
 
@@ -18,26 +18,23 @@ The current source passed local and GitHub verification. It is not ready to subm
 | --- | --- |
 | Concrete GenVM runner pin | Pass |
 | `genvm-lint check` | Pass |
-| `genvm-lint typecheck` | Pass in GitHub CI |
-| Hardened direct tests | Pass — 3 tests |
+| Hardened direct tests | Pass — 4 tests |
 | Independent validator replay over intermediate results | Pass |
-| Five-validator GLSim integration | Pass |
 | Deterministic final-outcome derivation | Pass |
 | Structured intermediate result stored on-chain | Pass |
 | Meaningful reusable lifecycle after judgment | Pass |
-| Current-source StudioNet deployment and intelligent write | Pending redeployment |
-| Previous deployment | Superseded; do not submit as current proof |
+| Current-source StudioNet deployment | Pass — FINALIZED |
+| Current-source intelligent write | Pass — FINALIZED, successful execution |
 | Fund custody and cross-contract calls | None |
 
 ## Rejection issue addressed
 
-The model no longer returns a final category for one equality check. Consensus binds independently replayed intermediate findings, the contract derives the final outcome by explicit rules, and that outcome controls later contract-specific state transitions.
+The model no longer returns one final category for a single equality check. Consensus binds independently replayed intermediate findings, deterministic contract logic derives the final outcome, and that outcome controls contract-specific downstream state transitions.
 
-## Required before submission
+## Current evidence
 
-1. Deploy the current `contracts/feedback_theme_board.py` source.
-2. Execute and finalize a representative intelligent write.
-3. Record the new contract address, transaction hashes, observed intermediate fields, and source hash.
-4. Replace the pending fields in `SUBMISSION.md`, `README.md`, and `deployments/studionet.json`.
-
-Legacy deployment address: `0x936D5aA5570bFE30AfBF5334144d2368A6aE31b5`.
+- Contract: https://explorer-studio.genlayer.com/address/0xD7eC1F04d32D36560c5FcDD4780F3c0f69518a01
+- Studio import: https://studio.genlayer.com/?import-contract=0xD7eC1F04d32D36560c5FcDD4780F3c0f69518a01
+- Deployment transaction: https://explorer-studio.genlayer.com/tx/0xf6207c89d43c3fbc39259b748237567fee2489ad8b2b3d416b64f73f88a9aa68
+- Intelligent transaction: https://explorer-studio.genlayer.com/tx/0x3e8e5b19e74f53808dbcfc2de62dbd2460a6f51500952d5f23f7e9ba59d179a9
+- Observed state: `theme_scores="20"`, deterministically assigned `theme="ACCESS"`
