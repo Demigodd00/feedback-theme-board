@@ -1,9 +1,15 @@
-Contribution Date: 08/25/2026
+Contribution Date: 08/31/2026
 
 Title: Feedback Theme Board
 
+Submission status:
+HOLD — current-source StudioNet redeployment required before submission.
+
 Notes / Description:
-Built a reusable participant feedback board. A facilitator freezes a small theme taxonomy, each address submits one feedback entry, GenLayer consensus assigns only the closest theme or OTHER, and the same participants vote on the final priority. Subjective urgency scoring is intentionally excluded; vote counting and NO_PRIORITY tie handling are deterministic and no personal traits are inferred.
+Built a reusable participant feedback board. Validator consensus scores every frozen theme for each entry; the contract derives the assigned theme from the complete score vector, and authenticated participants separately vote on the final priority.
+
+Structured contract behavior:
+Validators bind a complete ordered 0/1/2 relevance-score vector across every frozen theme. The contract stores that vector and deterministically selects a unique positive maximum, with ties and all-zero vectors mapped to OTHER before participant priority voting.
 
 Evidence & Supporting:
 
@@ -13,14 +19,20 @@ https://github.com/Demigodd00/feedback-theme-board
 GitHub File:
 https://github.com/Demigodd00/feedback-theme-board/blob/main/contracts/feedback_theme_board.py
 
+Current source SHA-256:
+2f0de13f5163f437e83afa6b9b7bf033add7def405ebac602cf339b81cbd8151
+
 GenLayer Studio Contract:
-https://studio.genlayer.com/?import-contract=0x936D5aA5570bFE30AfBF5334144d2368A6aE31b5
+PENDING — deploy the current main-branch source.
 
 GenLayer Explorer Contract:
-https://explorer-studio.genlayer.com/address/0x936D5aA5570bFE30AfBF5334144d2368A6aE31b5
+PENDING — do not reuse the superseded deployment.
 
-Other — deployment transaction:
-https://explorer-studio.genlayer.com/tx/0x6111c206b69b1b49f201c9914b60c3a464986bab040ed4749bd27675d4cae0cd
+Deployment transaction:
+PENDING
 
-Other — successful intelligent transaction:
-https://explorer-studio.genlayer.com/tx/0x6ca322f6975435a7b9c78b2482e0476783ddead0bfc3ff32cbe322097d1c23f6
+Successful intelligent transaction:
+PENDING
+
+Legacy evidence notice:
+The previous deployment at 0x936D5aA5570bFE30AfBF5334144d2368A6aE31b5 is bound to an older category-only source and is retained only as historical evidence. It must not be submitted as proof of the current implementation.
