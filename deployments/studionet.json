@@ -35,8 +35,8 @@
     },
     "source_and_tests_ci": {
       "status": "success",
-      "workflow_run": "pending",
-      "note": "Current quorum source passes GenVM lint, 6 direct tests, and the five-validator local consensus test."
+      "workflow_run": "https://github.com/Demigodd00/feedback-theme-board/actions/runs/34152784856",
+      "note": "Current quorum source passed GenVM lint, type checking, 6 direct tests, and the five-validator GLSim consensus flow."
     }
   },
   "source": {
