@@ -4,15 +4,17 @@
   "chain_id": 61999,
   "rpc": "https://studio.genlayer.com/api",
   "owner_wallet_address": "0xa6e2f12169f311c4439f83569f2cd36771390f9a",
-  "contract_address": "0xD7eC1F04d32D36560c5FcDD4780F3c0f69518a01",
-  "deployment_transaction_hash": "0xf6207c89d43c3fbc39259b748237567fee2489ad8b2b3d416b64f73f88a9aa68",
-  "intelligent_transaction_hash": "0x3e8e5b19e74f53808dbcfc2de62dbd2460a6f51500952d5f23f7e9ba59d179a9",
-  "verified_on": "2026-08-31",
+  "contract_address": "0xDA680f355dfDC1178357844AB70cc197D5b910a8",
+  "deployment_transaction_hash": "0x44dc5684cfc2c42eb0f6569332a6506ffd82c9307398cc204129e5804776c7da",
+  "intelligent_transaction_hash": "0xf9403f3a2adb9a71332063e0f2013190dbc572e376ab0f97c01fba830d5d66fe",
+  "quorum_finalization_transaction_hash": "0xfce029cef108fb6b4f12ccb242f713afdd386b95f7b57de6e1df1443905e1b0a",
+  "verified_on": "2026-09-07",
   "links": {
-    "studio_import": "https://studio.genlayer.com/?import-contract=0xD7eC1F04d32D36560c5FcDD4780F3c0f69518a01",
-    "explorer_contract": "https://explorer-studio.genlayer.com/address/0xD7eC1F04d32D36560c5FcDD4780F3c0f69518a01",
-    "deployment_transaction": "https://explorer-studio.genlayer.com/tx/0xf6207c89d43c3fbc39259b748237567fee2489ad8b2b3d416b64f73f88a9aa68",
-    "intelligent_transaction": "https://explorer-studio.genlayer.com/tx/0x3e8e5b19e74f53808dbcfc2de62dbd2460a6f51500952d5f23f7e9ba59d179a9"
+    "studio_import": "https://studio.genlayer.com/?import-contract=0xDA680f355dfDC1178357844AB70cc197D5b910a8",
+    "explorer_contract": "https://explorer-studio.genlayer.com/address/0xDA680f355dfDC1178357844AB70cc197D5b910a8",
+    "deployment_transaction": "https://explorer-studio.genlayer.com/tx/0x44dc5684cfc2c42eb0f6569332a6506ffd82c9307398cc204129e5804776c7da",
+    "intelligent_transaction": "https://explorer-studio.genlayer.com/tx/0xf9403f3a2adb9a71332063e0f2013190dbc572e376ab0f97c01fba830d5d66fe",
+    "quorum_finalization_transaction": "https://explorer-studio.genlayer.com/tx/0xfce029cef108fb6b4f12ccb242f713afdd386b95f7b57de6e1df1443905e1b0a"
   },
   "verification": {
     "transaction_execution_succeeded": true,
@@ -24,17 +26,22 @@
       "feedback_id": "f1",
       "theme_scores": "20",
       "assigned_theme": "ACCESS",
-      "state": "CLASSIFIED"
+      "board_phase": "COMPLETE",
+      "feedback_count": 3,
+      "vote_count": 2,
+      "priority_quorum": 2,
+      "nonvoter_count": 1,
+      "priority_theme": "ACCESS"
     },
     "source_and_tests_ci": {
       "status": "success",
-      "workflow_run": "https://github.com/Demigodd00/feedback-theme-board/actions/runs/33385160876",
-      "note": "Current normalized-score source and direct-test commit passed contract-ci."
+      "workflow_run": "pending",
+      "note": "Current quorum source passes GenVM lint, 6 direct tests, and the five-validator local consensus test."
     }
   },
   "source": {
     "path": "contracts/feedback_theme_board.py",
-    "sha256": "5e8e16d8087dd7677be932078495a5d1dd6d3b125cd50e1adbe62f73dca21c77",
+    "sha256": "7c231f53a40551898d23ecfe4baa46af7a9d81c79048545355cf3bed90ac0dff",
     "genvm_runner": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6"
   },
   "wallet_policy": "owner-specific encrypted keystore outside the workspace; no secret committed",

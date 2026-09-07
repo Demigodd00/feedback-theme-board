@@ -54,6 +54,50 @@ def test_classification_vote_and_priority(direct_vm, direct_deploy, direct_alice
     assert contract.get_theme("ACCESS")["classified_count"] == 2
 
 
+def test_priority_quorum_finishes_when_one_participant_never_votes(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie):
+    contract = deploy(direct_vm, direct_deploy, direct_alice)
+    prepare(contract, direct_vm, direct_alice, direct_bob, direct_charlie)
+    direct_vm.mock_llm(PROMPT, json.dumps({"theme_scores": "20"}))
+    contract.classify_feedback("f1")
+    contract.classify_feedback("f2")
+    contract.classify_feedback("f3")
+
+    contract.vote_priority("ACCESS")
+    with direct_vm.expect_revert("priority_quorum_not_reached"):
+        contract.finalize_board()
+
+    direct_vm.sender = direct_bob
+    contract.vote_priority("ACCESS")
+    direct_vm.sender = direct_alice
+    state = contract.get_state()
+    assert state["priority_quorum"] == 2
+    assert state["votes_needed_for_quorum"] == 0
+    assert state["nonvoter_count"] == 1
+    contract.finalize_board()
+    final_state = contract.get_state()
+    assert final_state["board_phase"] == "COMPLETE"
+    assert final_state["priority_theme"] == "ACCESS"
+    assert final_state["nonvoter_count"] == 1
+
+
+def test_quorum_tie_has_explicit_no_priority_result(direct_vm, direct_deploy, direct_alice, direct_bob, direct_charlie):
+    contract = deploy(direct_vm, direct_deploy, direct_alice)
+    prepare(contract, direct_vm, direct_alice, direct_bob, direct_charlie)
+    direct_vm.mock_llm(PROMPT, json.dumps({"theme_scores": "20"}))
+    contract.classify_feedback("f1")
+    contract.classify_feedback("f2")
+    contract.classify_feedback("f3")
+
+    contract.vote_priority("ACCESS")
+    direct_vm.sender = direct_bob
+    contract.vote_priority("MATERIALS")
+    direct_vm.sender = direct_alice
+    contract.finalize_board()
+    assert contract.get_state()["priority_theme"] == "NO_PRIORITY"
+    assert contract.get_theme("ACCESS")["priority_votes"] == 1
+    assert contract.get_theme("MATERIALS")["priority_votes"] == 1
+
+
 def test_one_feedback_per_address_and_facilitator_controls_lock(direct_vm, direct_deploy, direct_alice, direct_bob):
     contract = deploy(direct_vm, direct_deploy, direct_alice)
     contract.add_theme("ACCESS", "Entry, seating, and room-access feedback for the workshop.")

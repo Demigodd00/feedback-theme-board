@@ -39,7 +39,9 @@ def test_five_validator_feedback_priority_board():
     ok(facilitator.classify_feedback(args=["f2"]).transact(transaction_context=context("02"), wait_transaction_status=TransactionStatus.FINALIZED))
     ok(facilitator.classify_feedback(args=["f3"]).transact(transaction_context=context("20"), wait_transaction_status=TransactionStatus.FINALIZED))
     ok(facilitator.vote_priority(args=["ACCESS"]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
-    ok(second.vote_priority(args=["MATERIALS"]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
-    ok(third.vote_priority(args=["ACCESS"]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
+    ok(second.vote_priority(args=["ACCESS"]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
     ok(facilitator.finalize_board(args=[]).transact(wait_transaction_status=TransactionStatus.FINALIZED))
-    assert facilitator.get_state(args=[]).call()["priority_theme"] == "ACCESS"
+    state = facilitator.get_state(args=[]).call()
+    assert state["priority_theme"] == "ACCESS"
+    assert state["priority_quorum"] == 2
+    assert state["nonvoter_count"] == 1

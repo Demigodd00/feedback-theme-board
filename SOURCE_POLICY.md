@@ -24,4 +24,4 @@ Every evidence packet is serialized as sorted JSON and surrounded by named START
 
 ## Interpretation boundary
 
-The facilitator chooses the taxonomy and may omit a useful theme. Every participant must vote before finalization. Applications must show these limits next to results and use a fresh deployment when the underlying source set or policy changes.
+The facilitator chooses the taxonomy and may omit a useful theme. Priority voting may be finalized after a strict-majority quorum (`floor(eligible participants / 2) + 1`); the unique highest recorded tally wins and a tied highest tally becomes `NO_PRIORITY`. Applications must display the quorum, recorded tally, and nonvoter count next to results and use a fresh deployment when the underlying source set or policy changes.

@@ -14,7 +14,7 @@ One completed deployment is an auditable record and is not reset or silently rep
 
 ## Roles and workflow
 
-A facilitator defines themes and controls phase changes; each participant submits once and receives one priority vote after all feedback is classified.
+A facilitator defines themes and controls phase changes; each participant submits once and receives one priority vote after all feedback is classified. Priority voting can be finalized after a strict-majority quorum, so one nonvoting participant cannot stall a three-person board.
 
 State path: `DEFINING_THEMES → COLLECTING_FEEDBACK → CLASSIFYING → PRIORITY_VOTING → COMPLETE`
 
@@ -28,7 +28,9 @@ The contract uses only the stored question, standard, frozen theme descriptions,
 
 - The theme taxonomy freezes before feedback collection.
 - Consensus binds the complete per-theme score vector; the model never supplies the selected theme ID.
-- The final priority comes from authenticated participant votes, with ties recorded as NO_PRIORITY.
+- Priority quorum is deterministic: `floor(eligible participants / 2) + 1`.
+- After quorum, the facilitator may finalize using the complete recorded tally; nonvoters remain counted and cannot block completion.
+- A unique highest tally wins, while tied highest tallies are recorded as `NO_PRIORITY`.
 
 ## Public interface
 
@@ -53,21 +55,22 @@ gltest tests/integration/test_glsim_consensus.py --network localnet -q
 
 The StudioNet smoke test is opt-in and requires three disposable owner-specific test accounts. It reads state using `LATEST_FINAL` and asserts successful finalized execution.
 
-## Previous StudioNet deployment (superseded)
+## Current StudioNet deployment
 
-These links and the recorded source hash refer to the earlier single-theme implementation. Redeploy the score-vector version and replace this section before submission.
+The deployment below contains the strict-majority quorum source and a completed three-participant demonstration with one nonvoter.
 
-- Contract: https://explorer-studio.genlayer.com/address/0x936D5aA5570bFE30AfBF5334144d2368A6aE31b5
-- Studio import: https://studio.genlayer.com/?import-contract=0x936D5aA5570bFE30AfBF5334144d2368A6aE31b5
-- Deployment transaction: https://explorer-studio.genlayer.com/tx/0x6111c206b69b1b49f201c9914b60c3a464986bab040ed4749bd27675d4cae0cd
-- Intelligent transaction: https://explorer-studio.genlayer.com/tx/0x6ca322f6975435a7b9c78b2482e0476783ddead0bfc3ff32cbe322097d1c23f6
-- Observed legacy final-state sample: `{"theme": "ACCESS"}`
-- Audited source SHA-256: `274e48028f03b0ddeab7782f68acfccd706129438cf11a1ddc9081e9e994bf99`
+- Contract: https://explorer-studio.genlayer.com/address/0xDA680f355dfDC1178357844AB70cc197D5b910a8
+- Studio import: https://studio.genlayer.com/?import-contract=0xDA680f355dfDC1178357844AB70cc197D5b910a8
+- Deployment transaction: https://explorer-studio.genlayer.com/tx/0x44dc5684cfc2c42eb0f6569332a6506ffd82c9307398cc204129e5804776c7da
+- Intelligent classification transaction: https://explorer-studio.genlayer.com/tx/0xf9403f3a2adb9a71332063e0f2013190dbc572e376ab0f97c01fba830d5d66fe
+- Quorum finalization transaction: https://explorer-studio.genlayer.com/tx/0xfce029cef108fb6b4f12ccb242f713afdd386b95f7b57de6e1df1443905e1b0a
+- Observed final state: `{"board_phase":"COMPLETE","feedback_count":3,"vote_count":2,"priority_quorum":2,"nonvoter_count":1,"priority_theme":"ACCESS"}`
+- Audited source SHA-256: `7c231f53a40551898d23ecfe4baa46af7a9d81c79048545355cf3bed90ac0dff`
 
 ## Limitations
 
 - The facilitator chooses the taxonomy and may omit a useful theme.
-- Every participant must vote before finalization.
+- The facilitator must call `finalize_board` after quorum is reached; later eligible votes are not accepted once the board is complete.
 - Feedback text is public and should not include private or medical information.
 
 ## Repository map

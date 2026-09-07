@@ -29,7 +29,7 @@ A facilitator defines themes and controls phase changes; each participant submit
 ## Residual risks
 
 - The facilitator chooses the taxonomy and may omit a useful theme.
-- Every participant must vote before finalization.
+- A strict-majority quorum must be reached before finalization; eligible nonvoters are reported in state and cannot vote after the board is complete.
 - Feedback text is public and should not include private or medical information.
 
 This contract should not be used to make legal, medical, financial, employment, admission, or physical-safety decisions unless its own policy explicitly supports that domain and an independent professional review is added. This version does not.

@@ -8,7 +8,7 @@ The constructor establishes the deployment's subject and policy. Later calls add
 
 ## Participants
 
-A facilitator defines themes and controls phase changes; each participant submits once and receives one priority vote after all feedback is classified.
+A facilitator defines themes and controls phase changes; each participant submits once and receives one priority vote after all feedback is classified. A strict-majority quorum prevents an absent participant from indefinitely blocking completion.
 
 Addresses are normalized before authorization comparisons. Role checks and phase gates execute before any semantic assessment.
 
@@ -32,13 +32,15 @@ The leader callback validates exact vector length and the closed score alphabet.
 
 ## Deterministic boundary
 
-Theme selection, one submission/vote per address, theme counts, all-entry completion, vote tallying, and NO_PRIORITY tie handling are deterministic.
+Theme selection, one submission/vote per address, theme counts, all-entry classification, strict-majority quorum calculation, vote tallying, and NO_PRIORITY tie handling are deterministic.
 
 Important invariants:
 
 - The theme taxonomy freezes before feedback collection.
 - Consensus binds every stored per-theme score; subjective urgency was deliberately removed.
-- The final priority comes from authenticated participant votes, with ties recorded as NO_PRIORITY.
+- Priority quorum is `floor(eligible participants / 2) + 1`; after quorum the facilitator can finalize without every participant voting.
+- The unique highest recorded tally wins; tied highest tallies become `NO_PRIORITY`.
+- `get_state` exposes quorum, votes still needed, and nonvoter count.
 
 No method sends value, pays rewards, escrows assets, deletes external data, or calls another contract.
 

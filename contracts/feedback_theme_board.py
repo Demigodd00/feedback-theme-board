@@ -69,6 +69,9 @@ class FeedbackThemeBoard(gl.Contract):
             _board_fail("feedback_not_found")
         return identifier
 
+    def _priority_quorum(self) -> int:
+        return (len(self.feedback_ids) // 2) + 1
+
     @gl.public.write
     def add_theme(self, theme_id: str, description: str) -> None:
         self._facilitator_only()
@@ -234,8 +237,10 @@ FEEDBACK_PACKET_END"""
     @gl.public.write
     def finalize_board(self) -> None:
         self._facilitator_only()
-        if self.board_phase != "PRIORITY_VOTING" or int(self.vote_count) != len(self.feedback_ids):
-            _board_fail("all_participant_votes_required")
+        if self.board_phase != "PRIORITY_VOTING":
+            _board_fail("priority_vote_not_open")
+        if int(self.vote_count) < self._priority_quorum():
+            _board_fail("priority_quorum_not_reached")
         best = int(self.priority_vote_counts.get("OTHER", u256(0)))
         selected = "OTHER"
         tied = False
@@ -264,9 +269,12 @@ FEEDBACK_PACKET_END"""
 
     @gl.public.view
     def get_state(self) -> dict[str, Any]:
-        return {"facilitator": str(self.facilitator).lower(), "board_phase": self.board_phase, "theme_count": len(self.theme_ids), "feedback_count": len(self.feedback_ids), "classified_count": int(self.classified_count), "vote_count": int(self.vote_count), "priority_theme": self.priority_theme}
+        eligible = len(self.feedback_ids)
+        votes = int(self.vote_count)
+        quorum = self._priority_quorum() if eligible > 0 else 0
+        return {"facilitator": str(self.facilitator).lower(), "board_phase": self.board_phase, "theme_count": len(self.theme_ids), "feedback_count": eligible, "classified_count": int(self.classified_count), "vote_count": votes, "priority_quorum": quorum, "votes_needed_for_quorum": max(0, quorum - votes), "nonvoter_count": eligible - votes, "priority_theme": self.priority_theme}
 
     @gl.public.view
     def get_policy(self) -> dict[str, Any]:
-        return {"schema": "feedback-theme-board/policy/v2", "workflow": "themes_feedback_per_theme_scores_deterministic_assignment_participant_vote", "theme_score_levels": "0=none,1=partial,2=strong", "theme_assignment_is_deterministically_derived": True, "tie_or_zero_fallback": "OTHER", "maximum_themes": MAX_THEMES, "maximum_feedback_entries": MAX_FEEDBACK, "participant_priority_vote": True, "private_or_medical_inference": False, "deterministic_priority_count": True, "stored_feedback_only": True, "custodies_funds": False}
+        return {"schema": "feedback-theme-board/policy/v3", "workflow": "themes_feedback_per_theme_scores_deterministic_assignment_participant_vote_quorum_finalization", "theme_score_levels": "0=none,1=partial,2=strong", "theme_assignment_is_deterministically_derived": True, "tie_or_zero_fallback": "OTHER", "maximum_themes": MAX_THEMES, "maximum_feedback_entries": MAX_FEEDBACK, "participant_priority_vote": True, "priority_quorum_rule": "strict_majority=floor(eligible_participants/2)+1", "priority_tie_result": "NO_PRIORITY", "nonvoters_block_after_quorum": False, "private_or_medical_inference": False, "deterministic_priority_count": True, "stored_feedback_only": True, "custodies_funds": False}
 

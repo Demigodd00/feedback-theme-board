@@ -88,9 +88,48 @@ def test_studionet_feedback_classification(
             wait_transaction_status=TransactionStatus.FINALIZED
         )
     )
+    ok(
+        facilitator.classify_feedback(args=["f2"]).transact(
+            wait_transaction_status=TransactionStatus.FINALIZED
+        )
+    )
+    ok(
+        facilitator.classify_feedback(args=["f3"]).transact(
+            wait_transaction_status=TransactionStatus.FINALIZED
+        )
+    )
+    ok(
+        facilitator.vote_priority(args=["ACCESS"]).transact(
+            wait_transaction_status=TransactionStatus.FINALIZED
+        )
+    )
+    ok(
+        participant_two.vote_priority(args=["ACCESS"]).transact(
+            wait_transaction_status=TransactionStatus.FINALIZED
+        )
+    )
+    finalized = ok(
+        facilitator.finalize_board(args=[]).transact(
+            wait_transaction_status=TransactionStatus.FINALIZED
+        )
+    )
     feedback = facilitator.get_feedback(args=["f1"]).call(transaction_hash_variant=TransactionHashVariant.LATEST_FINAL)
     assert feedback["assigned_theme"] in ("ACCESS", "MATERIALS", "OTHER")
-    observed = {"theme": feedback["assigned_theme"]}
+    state = facilitator.get_state(args=[]).call(transaction_hash_variant=TransactionHashVariant.LATEST_FINAL)
+    assert state["board_phase"] == "COMPLETE"
+    assert state["priority_quorum"] == 2
+    assert state["vote_count"] == 2
+    assert state["nonvoter_count"] == 1
+    assert state["priority_theme"] == "ACCESS"
+    observed = {
+        "theme_scores": feedback["theme_scores"],
+        "assigned_theme": feedback["assigned_theme"],
+        "board_phase": state["board_phase"],
+        "priority_quorum": state["priority_quorum"],
+        "vote_count": state["vote_count"],
+        "nonvoter_count": state["nonvoter_count"],
+        "priority_theme": state["priority_theme"],
+    }
     print(
         "STUDIONET_RECORD="
         + json.dumps(
@@ -98,6 +137,7 @@ def test_studionet_feedback_classification(
                 "address": address,
                 "deploy_tx": deployed["hash"],
                 "intelligent_tx": intelligent["hash"],
+                "quorum_finalization_tx": finalized["hash"],
                 "observed": observed,
             },
             sort_keys=True,
